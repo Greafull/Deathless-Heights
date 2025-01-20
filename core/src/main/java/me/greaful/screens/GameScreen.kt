@@ -63,16 +63,11 @@ class GameScreen : Screen {
         camera.viewportHeight = height.toFloat()
         camera.update()
     }
-
+    // TODO
     override fun pause() {
-        // Optional: Handle pause logic
     }
-
     override fun resume() {
-        // Optional: Handle resume logic
     }
-
     override fun hide() {
-        // Called when the screen is no longer visible
     }
 }

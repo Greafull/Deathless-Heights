@@ -1,24 +1,25 @@
 package me.greaful.screens
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Screen
+import com.badlogic.gdx.ScreenAdapter
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.PerspectiveCamera
 import com.badlogic.gdx.graphics.g3d.Environment
 import com.badlogic.gdx.graphics.g3d.ModelBatch
-import com.badlogic.gdx.graphics.g3d.ModelInstance
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
 import me.greaful.Items.Cube
 import me.greaful.system.InputHandler
+import me.greaful.system.LoadGLTF
 
-class GameScreen : Screen {
+class GameScreen : ScreenAdapter() {
 
     private lateinit var camera: PerspectiveCamera
     private lateinit var modelBatch: ModelBatch
     private lateinit var environment: Environment
     private val aroundCube = Cube(2f, 2f, 2f)
     private lateinit var inputHandler: InputHandler
+    private lateinit var loadGLTF: LoadGLTF
 
 
     override fun show() {
@@ -35,15 +36,14 @@ class GameScreen : Screen {
         camera.near = 1f
         camera.far = 100f
 
+        loadGLTF = LoadGLTF("untitled.gltf", camera, environment, 0f,0f, 0f)
+
+        loadGLTF.create()
         aroundCube.create()
         modelBatch = ModelBatch()
 
         camera.update()
 
-    }
-
-    override fun dispose() {
-        modelBatch.dispose()
     }
 
     override fun render(delta: Float) {
@@ -53,6 +53,7 @@ class GameScreen : Screen {
         inputHandler = InputHandler(camera)
         inputHandler.handleInputs()
 
+        loadGLTF.load()
         modelBatch.begin(camera)
         modelBatch.render(aroundCube.instance, environment)
         modelBatch.end()
@@ -63,6 +64,12 @@ class GameScreen : Screen {
         camera.viewportHeight = height.toFloat()
         camera.update()
     }
+
+    override fun dispose() {
+        modelBatch.dispose()
+        loadGLTF.dispose()
+    }
+
     // TODO
     override fun pause() {
     }

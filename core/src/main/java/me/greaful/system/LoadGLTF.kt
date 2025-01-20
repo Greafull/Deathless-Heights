@@ -20,13 +20,13 @@ class LoadGLTF(
 
     private lateinit var modelBatch: ModelBatch
     private lateinit var sceneAsset: SceneAsset
-    private lateinit var modelInstance: ModelInstance
+    lateinit var modelInstance: ModelInstance
 
     fun create() {
         modelBatch = ModelBatch()
-        sceneAsset = GLTFLoader().load(Gdx.files.internal(path))
+        sceneAsset = GLTFLoader().load(Gdx.files.internal(path)) //gets the model's file
         modelInstance = ModelInstance(sceneAsset.scene.model)
-        modelInstance.transform.setToTranslation(Vector3(x, y, z))
+        modelInstance.transform.setToTranslation(Vector3(x, y, z)) //moves object to pre-determined location
     }
 
     fun load() {

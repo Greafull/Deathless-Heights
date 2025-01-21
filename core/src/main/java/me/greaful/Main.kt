@@ -10,7 +10,5 @@ import me.greaful.system.input.InputConfiguration
 class Main : Game() {
     override fun create() {
         setScreen(GameScreen())
-        InputConfiguration
-
     }
 }

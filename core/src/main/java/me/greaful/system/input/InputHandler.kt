@@ -23,37 +23,34 @@ class InputHandler(private val player: Player) : InputAdapter() {
     }
 
     private fun handleKeyInput() {
-        val speed = 5f * Gdx.graphics.deltaTime
 
+        val speed = 5f * Gdx.graphics.deltaTime
         val direction = camera.direction
         val up = camera.up
-        try {
-            if (Gdx.input.isKeyPressed(inputConfig.preferences.getInteger(Keybind.FORWARD.name))) {
-                camera.position.add(direction.x * speed, direction.y * speed, 0f)
-                player.playerData.lastDirection = Keybind.FORWARD
-            }
-            if (Gdx.input.isKeyPressed(inputConfig.preferences.getInteger(Keybind.BACKWARD.name))) {
-                camera.position.add(-direction.x * speed, -direction.y * speed, 0f)
-                player.playerData.lastDirection = Keybind.BACKWARD
-            }
-            if (Gdx.input.isKeyPressed(inputConfig.preferences.getInteger(Keybind.LEFT.name))) {
-                camera.position.add(right?.scl(speed))
-                player.playerData.lastDirection = Keybind.LEFT
-            }
-            if (Gdx.input.isKeyPressed(inputConfig.preferences.getInteger(Keybind.RIGHT.name))) {
-                camera.position.add(right?.scl(-speed))
-                player.playerData.lastDirection = Keybind.RIGHT
-            }
-            if (Gdx.input.isKeyPressed(inputConfig.preferences.getInteger(Keybind.UP.name))) {
-                camera.position.add(0f, 0f, up.z * speed)
-                player.playerData.lastDirection = Keybind.UP
-            }
-            if (Gdx.input.isKeyPressed(inputConfig.preferences.getInteger(Keybind.DOWN.name))) {
-                camera.position.add(0f, 0f, -up.z * speed)
-                player.playerData.lastDirection = Keybind.DOWN
-            }
-        } catch (e: Exception) {
-            Gdx.app.error("Exception", "error while handling inputs", e)
+
+        if (Gdx.input.isKeyPressed(inputConfig.preferences.getInteger(Keybind.FORWARD.name))) {
+            camera.position.add(direction.x * speed, direction.y * speed, 0f)
+            player.playerData.lastDirection = Keybind.FORWARD
+        }
+        if (Gdx.input.isKeyPressed(inputConfig.preferences.getInteger(Keybind.BACKWARD.name))) {
+            camera.position.add(-direction.x * speed, -direction.y * speed, 0f)
+            player.playerData.lastDirection = Keybind.BACKWARD
+        }
+        if (Gdx.input.isKeyPressed(inputConfig.preferences.getInteger(Keybind.LEFT.name))) {
+            camera.position.add(right?.scl(speed))
+            player.playerData.lastDirection = Keybind.LEFT
+        }
+        if (Gdx.input.isKeyPressed(inputConfig.preferences.getInteger(Keybind.RIGHT.name))) {
+            camera.position.add(right?.scl(-speed))
+            player.playerData.lastDirection = Keybind.RIGHT
+        }
+        if (Gdx.input.isKeyPressed(inputConfig.preferences.getInteger(Keybind.UP.name))) {
+            camera.position.add(0f, 0f, up.z * speed)
+            player.playerData.lastDirection = Keybind.UP
+        }
+        if (Gdx.input.isKeyPressed(inputConfig.preferences.getInteger(Keybind.DOWN.name))) {
+            camera.position.add(0f, 0f, -up.z * speed)
+            player.playerData.lastDirection = Keybind.DOWN
         }
     }
 

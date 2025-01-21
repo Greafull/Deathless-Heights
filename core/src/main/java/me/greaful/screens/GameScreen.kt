@@ -7,11 +7,14 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.PerspectiveCamera
 import com.badlogic.gdx.graphics.g3d.Environment
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
-import me.greaful.system.InputHandler
+import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
+import me.greaful.player.Player
+import me.greaful.system.input.InputHandler
 import me.greaful.system.LoadGLTF
 
 class GameScreen : ScreenAdapter() {
 
+    private lateinit var player: Player
     private lateinit var camera: PerspectiveCamera
     private lateinit var environment: Environment
     private lateinit var inputHandler: InputHandler
@@ -22,7 +25,8 @@ class GameScreen : ScreenAdapter() {
 
         environment = Environment().apply {
             set(ColorAttribute.createAmbient(1f, 1f, 1f, 1f)) // Ambient light
-            set(ColorAttribute.createFog(1f, 1f, 1f, 1f))
+            add(DirectionalLight().set(1f, 1f, 1f, -1f, -0.8f, -0.2f)) // Directional light
+            add(DirectionalLight().set(1f, 1f, 1f, 1f, 0.8f, 0.2f))
         }
 
         camera = PerspectiveCamera(100f, Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
@@ -30,15 +34,10 @@ class GameScreen : ScreenAdapter() {
         camera.lookAt(0f, 0f, 0f)
         camera.near = 1f
         camera.far = 100f
+        player = Player(camera)
 
         loadGLTF = LoadGLTF("untitled.gltf", camera, environment, 0f,0f, 0f)
-
         loadGLTF.create()
-
-        for (material in loadGLTF.modelInstance.materials) {
-            material.set(ColorAttribute.createEmissive(Color.ORANGE)) // Full ambient light
-        }
-
         camera.update()
 
     }
@@ -47,7 +46,7 @@ class GameScreen : ScreenAdapter() {
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT or GL20.GL_DEPTH_BUFFER_BIT)
 
-        inputHandler = InputHandler(camera)
+        inputHandler = InputHandler(player)
         inputHandler.handleInputs()
 
         loadGLTF.load()

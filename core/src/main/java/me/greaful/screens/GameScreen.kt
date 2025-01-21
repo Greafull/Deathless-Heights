@@ -2,7 +2,6 @@ package me.greaful.screens
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.ScreenAdapter
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.PerspectiveCamera
 import com.badlogic.gdx.graphics.g3d.Environment
@@ -32,7 +31,7 @@ class GameScreen : ScreenAdapter() {
         camera = PerspectiveCamera(100f, Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
         camera.position.set(0f, 5f, 0f)
         camera.lookAt(0f, 0f, 0f)
-        camera.near = 1f
+        camera.near = 0.1f
         camera.far = 100f
         player = Player(camera)
 

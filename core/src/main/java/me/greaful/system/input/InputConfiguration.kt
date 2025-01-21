@@ -11,14 +11,20 @@ object InputConfiguration {
 
     init {
         try {
-            preferences.clear()
-            preferences.putInteger(Keybind.FORWARD.name, Keys.W)
-            preferences.putInteger(Keybind.BACKWARD.name, Keys.S)
-            preferences.putInteger(Keybind.LEFT.name, Keys.A)
-            preferences.putInteger(Keybind.RIGHT.name, Keys.D)
-            preferences.putInteger(Keybind.UP.name, Keys.SPACE)
-            preferences.putInteger(Keybind.DOWN.name, Keys.C)
-            preferences.flush()
+            preferences.get().getOrDefault("isSettingsSet", false)
+            if (preferences.getBoolean("isSettingsSet") == false) {
+                preferences.clear()
+                preferences.putInteger(Keybind.FORWARD.name, Keys.W)
+                preferences.putInteger(Keybind.BACKWARD.name, Keys.S)
+                preferences.putInteger(Keybind.LEFT.name, Keys.A)
+                preferences.putInteger(Keybind.RIGHT.name, Keys.D)
+                preferences.putInteger(Keybind.UP.name, Keys.SPACE)
+                preferences.putInteger(Keybind.DOWN.name, Keys.C)
+                preferences.remove("isSettingsSet")
+                preferences.putBoolean("isSettingsSet", true)
+                preferences.flush()
+            }
+
         } catch (e: Exception) {
             Gdx.app.error("Exception", "error while creating preferences", e)
         }
@@ -27,5 +33,6 @@ object InputConfiguration {
     fun updateKeybinds(newKey: Int, keybind: Keybind) {
         preferences.remove(keybind.name)
         preferences.putInteger(keybind.name, newKey)
+        preferences.flush()
     }
 }

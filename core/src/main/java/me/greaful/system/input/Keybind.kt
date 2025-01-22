@@ -1,4 +1,4 @@
-package me.greaful.player
+package me.greaful.system.input
 
 enum class Keybind {
     FORWARD,
@@ -6,5 +6,5 @@ enum class Keybind {
     LEFT,
     RIGHT,
     UP,
-    DOWN
+    DOWN,
 }

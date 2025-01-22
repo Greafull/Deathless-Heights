@@ -1,5 +1,7 @@
 package me.greaful.player
 
+import me.greaful.system.input.Keybind
+
 class PlayerData {
     var username: String? = null
     var x: Float? = 0f

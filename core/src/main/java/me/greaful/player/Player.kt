@@ -1,4 +1,8 @@
 package me.greaful.player
 
-class Player {
+import com.badlogic.gdx.graphics.PerspectiveCamera
+
+class Player(var camera: PerspectiveCamera?) {
+    var playerData = PlayerData()
+
 }

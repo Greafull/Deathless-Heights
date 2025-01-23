@@ -5,6 +5,7 @@ import com.badlogic.gdx.ScreenAdapter
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.PerspectiveCamera
 import com.badlogic.gdx.graphics.g3d.Environment
+import com.badlogic.gdx.graphics.g3d.ModelBatch
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
 import me.greaful.player.Player
@@ -18,14 +19,15 @@ class GameScreen : ScreenAdapter() {
     private lateinit var environment: Environment
     private lateinit var inputHandler: InputHandler
     private lateinit var loadGLTF: LoadGLTF
-
+    private var modelBatch: ModelBatch = ModelBatch()
 
     override fun show() {
 
         environment = Environment().apply {
-            set(ColorAttribute.createAmbient(1f, 1f, 1f, 1f)) // Ambient light
-            add(DirectionalLight().set(1f, 1f, 1f, -1f, -0.8f, -0.2f)) // Directional light
-            add(DirectionalLight().set(1f, 1f, 1f, 1f, 0.8f, 0.2f))
+            set(ColorAttribute.createAmbient(1f, 1f, 1f, 1f))
+            add(DirectionalLight().set(1f, 1f, 1f, -1f, -1f, -1f))
+            add(DirectionalLight().set(1f, 1f, 1f   , 1f, 1f, 1f))
+
         }
 
         camera = PerspectiveCamera(100f, Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
@@ -35,20 +37,27 @@ class GameScreen : ScreenAdapter() {
         camera.far = 100f
         player = Player(camera)
 
-        loadGLTF = LoadGLTF("untitled.gltf", camera, environment, 0f,0f, 0f)
+
+        loadGLTF = LoadGLTF("mesh/untitled.gltf", camera, 0f,0f, 0f)
         loadGLTF.create()
         camera.update()
-
     }
 
     override fun render(delta: Float) {
+
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT or GL20.GL_DEPTH_BUFFER_BIT)
+        Gdx.gl.glDepthMask(false)
 
         inputHandler = InputHandler(player)
         inputHandler.handleInputs()
 
-        loadGLTF.load()
+
+        modelBatch.begin(camera)
+        loadGLTF.renderGLTF(modelBatch, environment)
+        modelBatch.end()
+
+        Gdx.gl.glDepthMask(true)
     }
 
     override fun resize(width: Int, height: Int) {
@@ -59,6 +68,7 @@ class GameScreen : ScreenAdapter() {
 
     override fun dispose() {
         loadGLTF.dispose()
+        modelBatch.dispose()
     }
 
     // TODO

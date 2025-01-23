@@ -1,3 +1,8 @@
-.gitkeep
-untitled.bin
-untitled.gltf
+mesh/untitled.bin
+mesh/untitled.gltf
+textures/skybox/defaultSky/nx.jpg
+textures/skybox/defaultSky/ny.jpg
+textures/skybox/defaultSky/nz.jpg
+textures/skybox/defaultSky/px.jpg
+textures/skybox/defaultSky/py.jpg
+textures/skybox/defaultSky/pz.jpg

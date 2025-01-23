@@ -3,7 +3,6 @@ package me.greaful.system.input
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.Preferences
-import me.greaful.player.Keybind
 
 object InputConfiguration {
 
@@ -20,7 +19,6 @@ object InputConfiguration {
                 preferences.putInteger(Keybind.RIGHT.name, Keys.D)
                 preferences.putInteger(Keybind.UP.name, Keys.SPACE)
                 preferences.putInteger(Keybind.DOWN.name, Keys.C)
-                preferences.remove("isSettingsSet")
                 preferences.putBoolean("isSettingsSet", true)
                 preferences.flush()
             }

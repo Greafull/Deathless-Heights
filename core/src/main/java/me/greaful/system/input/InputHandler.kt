@@ -1,29 +1,15 @@
 package me.greaful.system.input
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.InputAdapter
-import me.greaful.player.Keybind
 import me.greaful.player.Player
 
-class InputHandler(private val player: Player) : InputAdapter() {
+class InputHandler(private val player: Player) {
 
     private val camera = player.camera!!
     private val inputConfig = InputConfiguration
     private val right = camera.up?.cpy()?.crs(camera.direction)?.nor() //right vector
 
-    private fun handleMouseInput() {
-        Gdx.input.isCursorCatched = true
-        val sensitivity = 0.1
-        val deltaX = -Gdx.input.deltaX * sensitivity
-        val deltaY = Gdx.input.deltaY * sensitivity
-
-        camera.rotateAround(camera.position, camera.up, deltaX.toFloat()) //yaw
-        camera.direction.rotate(camera.up, deltaX.toFloat()) //adjust yaw direction
-        camera.direction.rotate(right, deltaY.toFloat()) //adjust pitch
-    }
-
-    private fun handleKeyInput() {
-
+    private fun movementKeybinds() {
         val speed = 5f * Gdx.graphics.deltaTime
         val direction = camera.direction
         val up = camera.up
@@ -52,6 +38,22 @@ class InputHandler(private val player: Player) : InputAdapter() {
             camera.position.add(0f, 0f, -up.z * speed)
             player.playerData.lastDirection = Keybind.DOWN
         }
+    }
+
+    private fun handleMouseInput() {
+        Gdx.input.isCursorCatched = true
+        val sensitivity = 0.1
+        val deltaX = -Gdx.input.deltaX * sensitivity
+        val deltaY = Gdx.input.deltaY * sensitivity
+
+        camera.rotateAround(camera.position, camera.up, deltaX.toFloat()) //yaw
+        camera.direction.rotate(camera.up, deltaX.toFloat()) //adjust yaw direction
+        camera.direction.rotate(right, deltaY.toFloat()) //adjust pitch
+    }
+
+    private fun handleKeyInput() {
+        movementKeybinds()
+
     }
 
     fun handleInputs() {

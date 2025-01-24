@@ -73,11 +73,6 @@ class GameScreen : ScreenAdapter() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT or GL20.GL_DEPTH_BUFFER_BIT)
         Gdx.gl.glDepthFunc(GL20.GL_LEQUAL)
 
-        shaderProgram.bind()
-        shaderProgram.setUniformMatrix("u_projTrans", camera.combined)
-        shaderProgram.setUniformi("u_environmentCubemap", 0)
-        skyboxCubemap.bind(0) // Bind cubemap texture to texture unit 0
-
         inputHandler = InputHandler(player)
         inputHandler.handleInputs()
 

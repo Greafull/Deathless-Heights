@@ -18,7 +18,6 @@ class SkyboxShader(
     }
 
     override fun end() {
-        shaderProgram.end()
     }
 
     override fun canRender(instance: Renderable?): Boolean {
@@ -26,6 +25,10 @@ class SkyboxShader(
     }
 
     override fun render(renderable: Renderable?) {
+        shaderProgram.bind()
+        shaderProgram.setUniformMatrix("u_projTrans", camera?.combined)
+        shaderProgram.setUniformi("u_environmentCubemap", 0)
+        skyboxCubemap.bind(0) // Bind cubemap texture to texture unit 0
         renderable?.meshPart?.render(shaderProgram)
     }
 
@@ -35,9 +38,6 @@ class SkyboxShader(
     }
 
     override fun begin(camera: Camera?, context: RenderContext?) {
-        this.camera = camera
-        shaderProgram.begin()
-        shaderProgram.setUniformMatrix("u_projTrans", camera?.combined)
     }
 
     override fun compareTo(other: Shader?): Int {

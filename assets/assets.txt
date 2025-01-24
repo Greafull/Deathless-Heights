@@ -1,8 +1,10 @@
 mesh/untitled.bin
 mesh/untitled.gltf
-textures/skybox/defaultSky/nx.jpg
-textures/skybox/defaultSky/ny.jpg
-textures/skybox/defaultSky/nz.jpg
-textures/skybox/defaultSky/px.jpg
-textures/skybox/defaultSky/py.jpg
-textures/skybox/defaultSky/pz.jpg
+shaders/skybox.frag
+shaders/skybox.vert
+textures/skybox/defaultSky/skybox/back.jpg
+textures/skybox/defaultSky/skybox/bottom.jpg
+textures/skybox/defaultSky/skybox/front.jpg
+textures/skybox/defaultSky/skybox/left.jpg
+textures/skybox/defaultSky/skybox/right.jpg
+textures/skybox/defaultSky/skybox/top.jpg

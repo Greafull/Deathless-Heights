@@ -5,21 +5,20 @@ import com.badlogic.gdx.ScreenAdapter
 import com.badlogic.gdx.graphics.Cubemap
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.PerspectiveCamera
-import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.VertexAttributes
-import com.badlogic.gdx.graphics.g3d.Attribute
 import com.badlogic.gdx.graphics.g3d.Environment
 import com.badlogic.gdx.graphics.g3d.Material
 import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.graphics.g3d.ModelBatch
 import com.badlogic.gdx.graphics.g3d.ModelInstance
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
-import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder
+import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import me.greaful.player.Player
 import me.greaful.system.input.InputHandler
 import me.greaful.system.LoadGLTF
+import me.greaful.system.SkyboxShader
 
 class GameScreen : ScreenAdapter() {
 
@@ -39,8 +38,9 @@ class GameScreen : ScreenAdapter() {
             Gdx.files.internal("textures/skybox/defaultSky/skybox/top.jpg"),
             Gdx.files.internal("textures/skybox/defaultSky/skybox/bottom.jpg"),
         )
-    lateinit var skyboxModel: Model
-
+    private lateinit var skyboxModel: Model
+    private val shaderProgram = ShaderProgram(Gdx.files.internal("shaders/skybox.vert"), Gdx.files.internal("shaders/skybox.frag"))
+    private lateinit var skyboxShader: SkyboxShader
 
     override fun show() {
 
@@ -59,6 +59,8 @@ class GameScreen : ScreenAdapter() {
         camera.far = 100f
         player = Player(camera)
 
+        skyboxShader = SkyboxShader(shaderProgram, camera, skyboxCubemap)
+
         loadGLTF = LoadGLTF("mesh/untitled.gltf", camera, 0f, 0f, 0f)
         createSkybox()
         loadGLTF.create()
@@ -69,17 +71,17 @@ class GameScreen : ScreenAdapter() {
 
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT or GL20.GL_DEPTH_BUFFER_BIT)
-        Gdx.gl.glDepthMask(false)
+        Gdx.gl.glDepthFunc(GL20.GL_LEQUAL)
 
         inputHandler = InputHandler(player)
         inputHandler.handleInputs()
 
         modelBatch.begin(camera)
-        modelBatch.render(skyboxInstance, environment)
         loadGLTF.renderGLTF(modelBatch, environment)
+        modelBatch.render(skyboxInstance, skyboxShader)
         modelBatch.end()
 
-        Gdx.gl.glDepthMask(true)
+        Gdx.gl.glDepthFunc(GL20.GL_LESS)
     }
 
     override fun resize(width: Int, height: Int) {
@@ -107,14 +109,7 @@ class GameScreen : ScreenAdapter() {
         val builder = ModelBuilder()
         skyboxModel = builder.createBox(
             20f, 20f, 20f, // Large size to encompass the camera
-            Material(
-                TextureAttribute.createDiffuse(Texture(Gdx.files.internal("textures/skybox/defaultSky/skybox/back.jpg"))),
-                TextureAttribute.createDiffuse(Texture(Gdx.files.internal("textures/skybox/defaultSky/skybox/bottom.jpg"))),
-                TextureAttribute.createDiffuse(Texture(Gdx.files.internal("textures/skybox/defaultSky/skybox/front.jpg"))),
-                TextureAttribute.createDiffuse(Texture(Gdx.files.internal("textures/skybox/defaultSky/skybox/left.jpg"))),
-                TextureAttribute.createDiffuse(Texture(Gdx.files.internal("textures/skybox/defaultSky/skybox/right.jpg"))),
-                TextureAttribute.createDiffuse(Texture(Gdx.files.internal("textures/skybox/defaultSky/skybox/top.jpg"))),
-            ),
+            Material(),
             (VertexAttributes.Usage.Position or VertexAttributes.Usage.Normal).toLong()
         )
 

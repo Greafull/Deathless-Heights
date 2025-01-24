@@ -2,12 +2,21 @@ package me.greaful.screens
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.ScreenAdapter
+import com.badlogic.gdx.graphics.Cubemap
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.PerspectiveCamera
+import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.VertexAttributes
+import com.badlogic.gdx.graphics.g3d.Attribute
 import com.badlogic.gdx.graphics.g3d.Environment
+import com.badlogic.gdx.graphics.g3d.Material
+import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.graphics.g3d.ModelBatch
+import com.badlogic.gdx.graphics.g3d.ModelInstance
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
+import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
+import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder
 import me.greaful.player.Player
 import me.greaful.system.input.InputHandler
 import me.greaful.system.LoadGLTF
@@ -20,25 +29,38 @@ class GameScreen : ScreenAdapter() {
     private lateinit var inputHandler: InputHandler
     private lateinit var loadGLTF: LoadGLTF
     private var modelBatch: ModelBatch = ModelBatch()
+    private lateinit var skyboxInstance: ModelInstance
+    private val skyboxCubemap =
+        Cubemap(
+            Gdx.files.internal("textures/skybox/defaultSky/skybox/back.jpg"),
+            Gdx.files.internal("textures/skybox/defaultSky/skybox/front.jpg"),
+            Gdx.files.internal("textures/skybox/defaultSky/skybox/right.jpg"),
+            Gdx.files.internal("textures/skybox/defaultSky/skybox/left.jpg"),
+            Gdx.files.internal("textures/skybox/defaultSky/skybox/top.jpg"),
+            Gdx.files.internal("textures/skybox/defaultSky/skybox/bottom.jpg"),
+        )
+    lateinit var skyboxModel: Model
+
 
     override fun show() {
 
         environment = Environment().apply {
             set(ColorAttribute.createAmbient(1f, 1f, 1f, 1f))
             add(DirectionalLight().set(1f, 1f, 1f, -1f, -1f, -1f))
-            add(DirectionalLight().set(1f, 1f, 1f   , 1f, 1f, 1f))
+            add(DirectionalLight().set(1f, 1f, 1f, 1f, 1f, 1f))
 
         }
 
-        camera = PerspectiveCamera(100f, Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
+        camera =
+            PerspectiveCamera(100f, Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
         camera.position.set(0f, 5f, 0f)
         camera.lookAt(0f, 0f, 0f)
         camera.near = 0.1f
         camera.far = 100f
         player = Player(camera)
 
-
-        loadGLTF = LoadGLTF("mesh/untitled.gltf", camera, 0f,0f, 0f)
+        loadGLTF = LoadGLTF("mesh/untitled.gltf", camera, 0f, 0f, 0f)
+        createSkybox()
         loadGLTF.create()
         camera.update()
     }
@@ -52,8 +74,8 @@ class GameScreen : ScreenAdapter() {
         inputHandler = InputHandler(player)
         inputHandler.handleInputs()
 
-
         modelBatch.begin(camera)
+        modelBatch.render(skyboxInstance, environment)
         loadGLTF.renderGLTF(modelBatch, environment)
         modelBatch.end()
 
@@ -74,8 +96,59 @@ class GameScreen : ScreenAdapter() {
     // TODO
     override fun pause() {
     }
+
     override fun resume() {
     }
+
     override fun hide() {
+    }
+
+    private fun createSkybox() {
+        val builder = ModelBuilder()
+        skyboxModel = builder.createBox(
+            20f, 20f, 20f, // Large size to encompass the camera
+            Material(
+                TextureAttribute.createDiffuse(Texture(Gdx.files.internal("textures/skybox/defaultSky/skybox/back.jpg"))),
+                TextureAttribute.createDiffuse(Texture(Gdx.files.internal("textures/skybox/defaultSky/skybox/bottom.jpg"))),
+                TextureAttribute.createDiffuse(Texture(Gdx.files.internal("textures/skybox/defaultSky/skybox/front.jpg"))),
+                TextureAttribute.createDiffuse(Texture(Gdx.files.internal("textures/skybox/defaultSky/skybox/left.jpg"))),
+                TextureAttribute.createDiffuse(Texture(Gdx.files.internal("textures/skybox/defaultSky/skybox/right.jpg"))),
+                TextureAttribute.createDiffuse(Texture(Gdx.files.internal("textures/skybox/defaultSky/skybox/top.jpg"))),
+            ),
+            (VertexAttributes.Usage.Position or VertexAttributes.Usage.Normal).toLong()
+        )
+
+        skyboxModel.meshes.first().let { mesh ->
+            val vertices = FloatArray(mesh.numVertices * mesh.vertexSize / 4)
+            mesh.getVertices(vertices)
+
+            val indices = ShortArray(mesh.numIndices)
+            mesh.getIndices(indices)
+
+            val vertexSize = mesh.vertexSize / 4 // Vertex size in floats
+            val normalOffset = mesh.getVertexAttribute(VertexAttributes.Usage.Normal).offset / 4
+
+            // Negate the normals
+            for (i in 0 until mesh.numVertices) {
+                val normalIndex = i * vertexSize + normalOffset
+                vertices[normalIndex] = -vertices[normalIndex]     // X
+                vertices[normalIndex + 1] = -vertices[normalIndex + 1] // Y
+                vertices[normalIndex + 2] = -vertices[normalIndex + 2] // Z
+            }
+
+            // Reverse the winding order of indices
+            for (i in indices.indices step 3) {
+                val tmp = indices[i]
+                indices[i] = indices[i + 2]
+                indices[i + 2] = tmp
+            }
+
+            // Update the mesh with modified data
+            mesh.setVertices(vertices)
+            mesh.setIndices(indices)
+
+
+            skyboxInstance = ModelInstance(skyboxModel)
+        }
     }
 }

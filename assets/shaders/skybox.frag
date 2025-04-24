@@ -1,10 +1,12 @@
 #version 330 core
 
-out vec4 FragColor;
-in vec3 TextCoords;
+#ifdef GL_ES
+precision mediump float;
+#endif
 
-uniform samplerCube skybox;
+uniform samplerCube u_environmentCubemap;
+varying vec3 v_texCoords;
 
 void main() {
-    FragColor = texture(skybox, TextCoords);
+    gl_FragColor = textureCube(u_environmentCubemap, v_texCoords);
 }

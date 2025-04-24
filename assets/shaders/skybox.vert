@@ -1,13 +1,10 @@
 #version 330 core
 
-layout (location = 0) in vec3 aPos;
-
-out vec3 TextCoords;
-
-uniform mat4 projection;
-uniform mat4 view;
+attribute vec3 a_position;
+uniform mat4 u_projTrans;
+varying vec3 v_texCoords;
 
 void main() {
-    TextCoords = aPos;
-    gl_Position = projection * view * vec4(apos, 1.0);
+    v_texCoords = a_position; // Pass position for cubemap sampling
+    gl_Position = u_projTrans * vec4(a_position, 1.0);
 }

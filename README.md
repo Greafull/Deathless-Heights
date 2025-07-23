@@ -36,4 +36,4 @@ For example, `core:clean` removes `build` folder only from the `core` project.
 
 ## About
 
-This is a game project taking inspiration from [Attack On Titan](https://en.wikipedia.org/wiki/Attack_on_Titan) and the (now discontinued) [Infinity Blade](https://www.epicgames.com/infinityblade) series. It's an extremely ambitious project that I likely will not finish.
+This is a game project taking inspiration from the (now discontinued) [Infinity Blade](https://www.epicgames.com/infinityblade) series. It's an extremely ambitious project that I likely will not finish or I might just forget this github exists and never update it-
